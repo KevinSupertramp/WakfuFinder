@@ -6,12 +6,20 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
 }
 
-typedef QMultiMap<QString, QString> MatchesMap;
+enum ProcessStep
+{
+    PROCESS_STEP_READ_CLASS,
+    PROCESS_STEP_REPLACE_CLASS
+};
+
+typedef QMultiMap<QString, QString> StringMatchesMap;
+typedef QMultiMap<int, QString> OpcodeMatchesMap;
 
 class MainWindow : public QMainWindow
 {
@@ -21,14 +29,22 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QFileInfoList ReadFileList();
+    void ProcessSource(QFileInfoList list, ProcessStep step);
+
 public slots:
+    void EmptyList();
     void ReadFiles();
     void Save();
+
+    void ParseSource();
     
 private:
     Ui::MainWindow *ui;
 
-    MatchesMap m_matches;
+    StringMatchesMap m_matches;
+    StringMatchesMap m_classes;
+    OpcodeMatchesMap m_opcodes;
 };
 
 #endif // MAINWINDOW_H
